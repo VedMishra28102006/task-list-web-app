@@ -3,6 +3,16 @@ import sqlite3
 
 app = Flask(__name__)
 
+db = sqlite3.connect("data.db")
+db.execute("""CREATE TABLE IF NOT EXISTS tasks (
+	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+	task TEXT NOT NULL,
+	urgent INTEGER NOT NULL DEFAULT 0,
+	urgent_updated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+)""")
+db.commit()
+db.close()
+
 @app.route("/", methods=["GET"])
 def index():
 	return render_template("index.html")
@@ -109,13 +119,4 @@ def urgentTask(id):
 		}), 404
 
 if __name__ == "__main__":
-	db = sqlite3.connect("data.db")
-	db.execute("""CREATE TABLE IF NOT EXISTS tasks (
-		id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-		task TEXT NOT NULL,
-		urgent INTEGER NOT NULL DEFAULT 0,
-		urgent_updated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-	)""")
-	db.commit()
-	db.close()
 	app.run()
